@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เล่น XO กับน้องขวัญใจ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 150px;
+            height: 150px;
+            background: url('image_3.png') no-repeat center;
+            background-size: contain;
+            opacity: 0.8;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            z-index: 2;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            height: fit-content;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 80px;
+            height: 80px;
+            background: url('image_1.png') no-repeat center;
+            background-size: contain;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .game-container::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 100px;
+            height: 60px;
+            background: url('image_2.png') no-repeat center;
+            background-size: contain;
+            opacity: 0.12;
+            z-index: 0;
+        }
+
+        .game-container>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .title {
+            font-size: 28px;
+            color: #ff6b9d;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(255, 107, 157, 0.3);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                text-shadow: 2px 2px 4px rgba(255, 107, 157, 0.3);
+            }
+
+            to {
+                text-shadow: 2px 2px 8px rgba(255, 107, 157, 0.5), 0 0 20px rgba(255, 107, 157, 0.2);
+            }
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cell {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border: 3px solid #ff6b9d;
+            border-radius: 15px;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #333;
+            box-shadow: 0 4px 8px rgba(255, 107, 157, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .cell:hover::before {
+            left: 100%;
+        }
+
+        .cell:hover {
+            background: linear-gradient(145deg, #ffe0e8, #ffd0dc);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 16px rgba(255, 107, 157, 0.3);
+        }
+
+        .cell:active {
+            transform: scale(0.95);
+            transition: transform 0.1s;
+        }
+
+        .cell.disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .game-status {
+            font-size: 18px;
+            margin: 20px 0;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal h2 {
+            color: #ff6b9d;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .modal p {
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .btn {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background: linear-gradient(145deg, #5a52ff, #4c44ff);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn.correct {
+            background: linear-gradient(145deg, #4CAF50, #45a049);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn.incorrect {
+            background: linear-gradient(145deg, #f44336, #da190b);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        .btn.correct:hover {
+            background: linear-gradient(145deg, #45a049, #388e3c);
+            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn.incorrect:hover {
+            background: linear-gradient(145deg, #da190b, #c62828);
+            box-shadow: 0 6px 16px rgba(244, 67, 54, 0.4);
+        }
+
+        .choice-btn {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 15px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .choice-btn:hover::before {
+            left: 100%;
+        }
+
+        .choice-btn:hover {
+            background: linear-gradient(145deg, #5a52ff, #4c44ff);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .choice-btn:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .choice-btn.correct {
+            background: linear-gradient(145deg, #4CAF50, #45a049);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .choice-btn.incorrect {
+            background: linear-gradient(145deg, #f44336, #da190b);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        .choice-btn.correct:hover {
+            background: linear-gradient(145deg, #45a049, #388e3c);
+            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+        }
+
+        .choice-btn.incorrect:hover {
+            background: linear-gradient(145deg, #da190b, #c62828);
+            box-shadow: 0 6px 16px rgba(244, 67, 54, 0.4);
+        }
+
+        .reset-btn {
+            background: linear-gradient(145deg, #6c63ff, #5a52ff);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reset-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .reset-btn:hover::before {
+            left: 100%;
+        }
+
+        .reset-btn:hover {
+            background: linear-gradient(145deg, #5a52ff, #4c44ff);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(108, 99, 255, 0.4);
+        }
+
+        .reset-btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(108, 99, 255, 0.3);
+        }
+
+        .character {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .result-modal .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .result-modal h2 {
+            color: white;
+        }
+
+        .qr-code {
+            margin: 20px auto;
+            max-width: 200px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .qr-code.show {
+            display: block;
+            animation: qrFadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes qrFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .character-images {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .character-img {
+            position: absolute;
+            max-width: 200px;
+            opacity: 0.6;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .character-img.img1 {
+            top: 25%;
+            right: 8%;
+            width: 160px;
+            animation-delay: 0s;
+            z-index: 1;
+        }
+
+        .character-img.img2 {
+            top: 60%;
+            left: 8%;
+            width: 180px;
+            animation-delay: 1s;
+            z-index: 1;
+        }
+
+        .character-img.img3 {
+            bottom: 25%;
+            right: 15%;
+            width: 200px;
+            animation-delay: 2s;
+            z-index: 1;
+        }
+
+        .character-img.img4 {
+            top: 80%;
+            right: 25%;
+            width: 100px;
+            animation-delay: 0.5s;
+            z-index: 1;
+        }
+
+        .character-img.img5 {
+            bottom: 60%;
+            left: 15%;
+            width: 130px;
+            animation-delay: 1.5s;
+            z-index: 1;
+        }
+
+        .character-img.img6 {
+            top: 40%;
+            right: 30%;
+            width: 120px;
+            animation-delay: 2.5s;
+            z-index: 1;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(2deg);
+            }
+        }
+
+        .character-decoration {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .decoration-1 {
+            top: 45%;
+            right: 35%;
+            width: 60px;
+            opacity: 0.25;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .decoration-2 {
+            bottom: 40%;
+            left: 25%;
+            width: 70px;
+            opacity: 0.2;
+            animation: float 5s ease-in-out infinite reverse;
+        }
+
+        .decoration-3 {
+            top: 70%;
+            right: 5%;
+            width: 50px;
+            opacity: 0.3;
+            animation: float 3.5s ease-in-out infinite;
+        }
+
+        .game-status.correct {
+            color: #4CAF50;
+            font-weight: bold;
+            animation: correctGlow 2s ease-in-out;
+        }
+
+        .game-status.incorrect {
+            color: #f44336;
+            font-weight: bold;
+            animation: incorrectGlow 2s ease-in-out;
+        }
+
+        @keyframes correctGlow {
+
+            0%,
+            100% {
+                color: #4CAF50;
+            }
+
+            50% {
+                color: #66BB6A;
+                text-shadow: 0 0 10px #4CAF50;
+            }
+        }
+
+        @keyframes incorrectGlow {
+
+            0%,
+            100% {
+                color: #f44336;
+            }
+
+            50% {
+                color: #e57373;
+                text-shadow: 0 0 10px #f44336;
+            }
+        }
+
+        .rules-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            height: fit-content;
+            position: relative;
+        }
+
+        .rules-panel::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 80px;
+            height: 80px;
+            background: url('image_2.png') no-repeat center;
+            background-size: contain;
+            opacity: 0.18;
+            z-index: 0;
+        }
+
+        .rules-panel>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .rules-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .rules-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .rules-list li {
+            margin-bottom: 12px;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 15px;
+            line-height: 1.5;
+            border-left: 4px solid #ff6b9d;
+            transition: all 0.3s ease;
+        }
+
+        .rules-list li:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .rules-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .rules-highlight {
+            color: #ffeb3b;
+            font-weight: bold;
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                flex-direction: column;
+                gap: 20px;
+                height: auto;
+                padding: 20px 0;
+            }
+
+            .rules-panel {
+                width: 100%;
+                max-width: 500px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="character-images">
+        <img src="image_1.png" alt="น้องขวัญใจ" class="character-img img1">
+        <img src="image_2.png" alt="น้องขวัญใจ Logo" class="character-img img2">
+        <img src="image_3.png" alt="น้องขวัญใจ with Logo" class="character-img img3">
+        <img src="image_1.png" alt="น้องขวัญใจ" class="character-img img4">
+        <img src="image_2.png" alt="น้องขวัญใจ Logo" class="character-img img5">
+        <img src="image_3.png" alt="น้องขวัญใจ with Logo" class="character-img img6">
+    </div>
+
+    <div class="character-decoration">
+        <img src="image_2.png" alt="decoration" class="decoration-1">
+        <img src="image_1.png" alt="decoration" class="decoration-2">
+        <img src="image_3.png" alt="decoration" class="decoration-3">
+    </div>
+
+    <div class="main-container">
+        <div class="rules-panel">
+            <div class="rules-title">📖 กติกาการเล่น</div>
+            <ul class="rules-list">
+                <li>🎯 คุณจะเล่นเป็น <span class="rules-highlight">X</span> และเริ่มเล่นก่อนเสมอ</li>
+                <li>🎲 คลิกที่ช่องที่ว่างเพื่อเล่น โดยจะมีคำถามขึ้นมา</li>
+                <li>✅ ตอบถูก → ได้วาง <span class="rules-highlight">X</span> ในเซลล์นั้น</li>
+                <li>❌ ตอบผิด → ข้ามตา น้องขวัญใจเล่นแทน</li>
+            </ul>
+        </div>
+
+        <div class="game-container">
+            <h1 class="title">เล่น XO กับน้องขวัญใจ</h1>
+            <p class="subtitle">คลิกเซลล์เพื่อตอบคำถาม แล้วลง X หรือ O</p>
+
+            <div class="character">🎀 น้องขวัญใจ: มาเล่นกันนะคะ~ 🎀</div>
+
+            <div class="game-status" id="gameStatus">ตาของคุณ - คลิกเซลล์เพื่อเริ่มเล่น</div>
+
+            <div class="game-board" id="gameBoard">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+
+            <button class="reset-btn" onclick="resetGame()">เริ่มเกมใหม่</button>
+        </div>
+
+        <div id="questionModal" class="modal">
+            <div class="modal-content">
+                <h2>คำถาม</h2>
+                <p id="questionText"></p>
+                <div id="choiceButtons"></div>
+            </div>
+        </div>
+
+        <div id="resultModal" class="modal result-modal">
+            <div class="modal-content">
+                <h2 id="resultTitle"></h2>
+                <p id="resultMessage"></p>
+                <img src="qr.png" alt="QR Code" class="qr-code" id="qrCode">
+                <button class="btn" onclick="resetGame()">เล่นอีกครั้ง</button>
+            </div>
+        </div>
+
+        <div id="feedbackModal" class="modal">
+            <div class="modal-content">
+                <h2>ผลลัพธ์</h2>
+                <p id="feedbackText"></p>
+                <button class="btn" onclick="closeFeedback()">ตกลง</button>
+            </div>
+        </div>
+
+        <script>
+            let gameBoard = ['', '', '', '', '', '', '', '', ''];
+            let currentPlayer = 'X'; // User always starts
+            let isGameActive = true;
+            let selectedCell = null;
+
+            const questions = [
+                {
+                    question: "คำถามที่ 1: น้องขวัญใจ ทำอะไรได้บ้าง?",
+                    choices: [
+                        { text: "ช่วยสรุปข้อมูล", correct: true },
+                        { text: "ปรุงอาหาร , ขับรถ", correct: false }
+                    ]
+                },
+                {
+                    question: "คำถามที่ 2: ต่างจาก chat GPT ยังไง?",
+                    choices: [
+                        { text: "ขวัญใจตอบคำถามโดยใช้ข้อมูลจากภายใน", correct: true },
+                        { text: "ขวัญใจไม่สามารถตอบภาษาไทยได้", correct: false }
+                    ]
+                },
+                {
+                    question: "คำถามที่ 3: ใช้น้องขวัญใจ แล้วดียังไง?",
+                    choices: [
+                        { text: "ใช้แล้วช่วยหาข้อมูล สรุปข้อมูล ประหยัดเวลา", correct: true },
+                        { text: "ใช้แล้วเสียเงินมาก , ใช้แล้วทำให้ขี้เกียจ", correct: false }
+                    ]
+                },
+                {
+                    question: "คำถามที่ 4: ถามขวัญใจ ดีกว่าถามกับคนยังไง?",
+                    choices: [
+                        { text: "ขวัญใจไม่เหนื่อย ถามได้ตลอดเวลา", correct: true },
+                        { text: "ขวัญใจตอบช้ากว่าคน , ขวัญใจไม่เข้าใจความรู้สึก", correct: false }
+                    ]
+                },
+                {
+                    question: "คำถามที่ 5: นอกจากช่วยตอบคำถามแล้ว ยังช่วยหาไฟล์ต้นฉบับได้ใช่ไหม?",
+                    choices: [
+                        { text: "ได้", correct: true },
+                        { text: "ไม่ได้", correct: false }
+                    ]
+                },
+                {
+                    question: "คำถามที่ 6: เพราะขวัญใจเป็น AI เลยทำงานได้ตลอด 24 ชั่วโมง ใช่ไหม?",
+                    choices: [
+                        { text: "ใช่", correct: true },
+                        { text: "ไม่ใช่", correct: false }
+                    ]
+                },
+                {
+                    question: "คำถามที่ 7: ขวัญใจช่วยสร้างรูปภาพได้ใช่ไหม?",
+                    choices: [
+                        { text: "ไม่ได้", correct: true },
+                        { text: "ได้", correct: false }
+                    ]
+                },
+                {
+                    question: "คำถามที่ 8: ขวัญใจสามารถจำข้อมูลการสนทนาก่อนหน้าได้ไหม?",
+                    choices: [
+                        { text: "ได้", correct: true },
+                        { text: "ไม่ได้", correct: false }
+                    ]
+                },
+                {
+                    question: "คำถามที่ 9: ขวัญใจตอบคำถามเป็นภาษาไทยได้ไหม?",
+                    choices: [
+                        { text: "ได้", correct: true },
+                        { text: "ไม่ได้", correct: false }
+                    ]
+                }
+            ];
+
+            const cells = document.querySelectorAll('.cell');
+            const gameStatus = document.getElementById('gameStatus');
+            const questionModal = document.getElementById('questionModal');
+            const resultModal = document.getElementById('resultModal');
+            const feedbackModal = document.getElementById('feedbackModal');
+
+            // Add click event listeners to cells
+            cells.forEach(cell => {
+                cell.addEventListener('click', handleCellClick);
+            });
+
+            function handleCellClick(e) {
+                const index = parseInt(e.target.dataset.index);
+
+                if (gameBoard[index] !== '' || !isGameActive || currentPlayer !== 'X') {
+                    return;
+                }
+
+                selectedCell = index;
+                showQuestion(index);
+            }
+
+            function showQuestion(index) {
+                const questionText = document.getElementById('questionText');
+                const choiceButtons = document.getElementById('choiceButtons');
+                
+                questionText.textContent = questions[index].question;
+                choiceButtons.innerHTML = '';
+                
+                // Create choice buttons
+                questions[index].choices.forEach((choice, choiceIndex) => {
+                    const button = document.createElement('button');
+                    button.className = 'choice-btn';
+                    button.textContent = choice.text;
+                    button.onclick = () => answerQuestion(choice.correct, choiceIndex);
+                    choiceButtons.appendChild(button);
+                });
+                
+                questionModal.style.display = 'block';
+            }
+
+            function answerQuestion(isCorrect, choiceIndex) {
+                const choiceButtons = document.querySelectorAll('.choice-btn');
+                
+                // Disable all buttons
+                choiceButtons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.style.cursor = 'not-allowed';
+                });
+                
+                // Show correct/incorrect styling
+                choiceButtons.forEach((btn, index) => {
+                    if (index === choiceIndex) {
+                        btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                    }
+                });
+
+                setTimeout(() => {
+                    questionModal.style.display = 'none';
+                    
+                    if (isCorrect) {
+                        gameStatus.textContent = "ตอบถูก คุณได้เล่นต่อ";
+                        gameStatus.classList.add('correct');
+                        setTimeout(() => {
+                            gameStatus.classList.remove('correct');
+                            makeMove(selectedCell, 'X');
+                            if (isGameActive) {
+                                setTimeout(botMove, 300);
+                            }
+                        }, 1000);
+                    } else {
+                        gameStatus.textContent = "ตอบผิดค่า น้องขวัญใจขอข้ามตานะคะ";
+                        gameStatus.classList.add('incorrect');
+                        setTimeout(() => {
+                            gameStatus.classList.remove('incorrect');
+                            if (isGameActive) {
+                                botMove();
+                            }
+                        }, 1000);
+                    }
+                }, 1500);
+            }
+
+            function showFeedback(message) {
+                document.getElementById('feedbackText').textContent = message;
+                feedbackModal.style.display = 'block';
+            }
+
+            function closeFeedback() {
+                feedbackModal.style.display = 'none';
+            }
+
+            function makeMove(index, player) {
+                gameBoard[index] = player;
+                cells[index].textContent = player;
+                cells[index].classList.add('disabled');
+
+                if (checkWinner()) {
+                    endGame(player);
+                } else if (gameBoard.every(cell => cell !== '')) {
+                    endGame('draw');
+                } else {
+                    currentPlayer = player === 'X' ? 'O' : 'X';
+                    updateGameStatus();
+                }
+            }
+
+            function botMove() {
+                const emptyCells = gameBoard.map((cell, index) => cell === '' ? index : null).filter(val => val !== null);
+
+                if (emptyCells.length === 0) return;
+
+                const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+
+                gameStatus.textContent = "น้องขวัญใจกำลังคิด...";
+
+                setTimeout(() => {
+                    makeMove(randomIndex, 'O');
+                }, 500);
+            }
+
+            function checkWinner() {
+                const winPatterns = [
+                    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                    [0, 4, 8], [2, 4, 6] // diagonals
+                ];
+
+                return winPatterns.some(pattern => {
+                    const [a, b, c] = pattern;
+                    return gameBoard[a] !== '' && gameBoard[a] === gameBoard[b] && gameBoard[b] === gameBoard[c];
+                });
+            }
+
+            function endGame(winner) {
+                isGameActive = false;
+                const resultTitle = document.getElementById('resultTitle');
+                const resultMessage = document.getElementById('resultMessage');
+                const qrCode = document.getElementById('qrCode');
+
+                if (winner === 'X') {
+                    resultTitle.textContent = "ยินดีด้วย!";
+                    resultMessage.textContent = "คุณชนะน้องขวัญใจแล้ว";
+                    qrCode.classList.add('show');
+                } else if (winner === 'O') {
+                    resultTitle.textContent = "น้องขวัญใจชนะ!";
+                    resultMessage.textContent = "ลองใหม่อีกครั้งน้าา~~";
+                    qrCode.classList.remove('show');
+                } else {
+                    resultTitle.textContent = "เสมอกัน!";
+                    resultMessage.textContent = "ไม่มีใครชนะใครเลย เล่นใหม่กันไหม?";
+                    qrCode.classList.remove('show');
+                }
+
+                resultModal.style.display = 'block';
+            }
+
+            function updateGameStatus() {
+                if (currentPlayer === 'X') {
+                    gameStatus.textContent = "ตาของคุณ - คลิกเซลล์เพื่อตอบคำถาม";
+                } else {
+                    gameStatus.textContent = "ตาของน้องขวัญใจ";
+                }
+            }
+
+            function resetGame() {
+                gameBoard = ['', '', '', '', '', '', '', '', ''];
+                currentPlayer = 'X';
+                isGameActive = true;
+                selectedCell = null;
+
+                cells.forEach(cell => {
+                    cell.textContent = '';
+                    cell.classList.remove('disabled');
+                });
+
+                gameStatus.textContent = "ตาของคุณ - คลิกเซลล์เพื่อเริ่มเล่น";
+
+                // Hide QR code
+                document.getElementById('qrCode').classList.remove('show');
+
+                // Close all modals
+                questionModal.style.display = 'none';
+                resultModal.style.display = 'none';
+                feedbackModal.style.display = 'none';
+            }
+
+
+            // Close modal when clicking outside
+            window.onclick = function (event) {
+                if (event.target === questionModal || event.target === resultModal || event.target === feedbackModal) {
+                    // Don't close question modal by clicking outside
+                    if (event.target === resultModal) {
+                        resultModal.style.display = 'none';
+                    }
+                    if (event.target === feedbackModal) {
+                        feedbackModal.style.display = 'none';
+                    }
+                }
+            }
+        </script>
+</body>
+
+</html>
