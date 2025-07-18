@@ -1210,66 +1210,143 @@
 
             const questions = [
                 {
-                    question: "คำถามที่ 1: น้องขวัญใจ ทำอะไรได้บ้าง?",
+                    question: "Vector Embeddings ถูกสร้างขึ้นในขั้นตอนใด?",
                     choices: [
-                        { text: "ช่วยสรุปข้อมูล", correct: true },
-                        { text: "ปรุงอาหาร , ขับรถ", correct: false }
+                        { text: "การเตรียมข้อมูล", correct: true },
+                        { text: "การตอบคำถาม", correct: false }
                     ]
                 },
                 {
-                    question: "คำถามที่ 2: ต่างจาก chat GPT ยังไง?",
+                    question: "Vector Database (Vector DB) ใช้จัดเก็บข้อมูลประเภทใดเป็นหลัก?",
                     choices: [
-                        { text: "ขวัญใจตอบคำถามโดยใช้ข้อมูลจากภายใน", correct: true },
-                        { text: "ขวัญใจไม่สามารถตอบภาษาไทยได้", correct: false }
+                        { text: "ไฟล์เอกสารต้นฉบับ", correct: false },
+                        { text: "Vector Embeddings ของเอกสาร", correct: true }
                     ]
                 },
                 {
-                    question: "คำถามที่ 3: ใช้น้องขวัญใจ แล้วดียังไง?",
+                    question: "Embeddings Model มีหน้าที่แปลงคำถามของผู้ใช้ให้เป็น Vector ในขั้นตอนใด?",
                     choices: [
-                        { text: "ใช้แล้วช่วยหาข้อมูล สรุปข้อมูล ประหยัดเวลา", correct: true },
-                        { text: "ใช้แล้วเสียเงินมาก , ใช้แล้วทำให้ขี้เกียจ", correct: false }
+                        { text: "การเตรียมข้อมูล", correct: false },
+                        { text: "การหาข้อมูล", correct: true }
                     ]
                 },
                 {
-                    question: "คำถามที่ 4: ถามขวัญใจ ดีกว่าถามกับคนยังไง?",
+                    question: "LLMs (Large Language Models) มีบทบาทหลักในส่วนใดของระบบ Nong Kwanjai?",
                     choices: [
-                        { text: "ขวัญใจไม่เหนื่อย ถามได้ตลอดเวลา", correct: true },
-                        { text: "ขวัญใจตอบช้ากว่าคน , ขวัญใจไม่เข้าใจความรู้สึก", correct: false }
+                        { text: "การค้นหาข้อมูลที่เกี่ยวข้อง", correct: false },
+                        { text: "การตอบคำถามโดยใช้ข้อมูลที่ค้นพบ", correct: true }
                     ]
                 },
                 {
-                    question: "คำถามที่ 5: นอกจากช่วยตอบคำถามแล้ว ยังช่วยหาไฟล์ต้นฉบับได้ใช่ไหม?",
+                    question: "ในขั้นตอน \"การตอบคำถาม\" Nong Kwanjai ป้อนข้อมูลใดเข้าไปที่ LLMs?",
                     choices: [
-                        { text: "ได้", correct: true },
-                        { text: "ไม่ได้", correct: false }
+                        { text: "เฉพาะคำถามของผู้ใช้", correct: false },
+                        { text: "ทั้งคำถามและเอกสารที่เกี่ยวข้อง", correct: true }
                     ]
                 },
                 {
-                    question: "คำถามที่ 6: เพราะขวัญใจเป็น AI เลยทำงานได้ตลอด 24 ชั่วโมง ใช่ไหม?",
+                    question: "การสร้างดัชนีสำหรับค้นหา (Vector Embeddings) เกิดขึ้นในลำดับใดเมื่อเทียบกับการจัดเก็บข้อมูลลงใน Vector DB?",
+                    choices: [
+                        { text: "ก่อนการจัดเก็บ", correct: true },
+                        { text: "หลังการจัดเก็บ", correct: false }
+                    ]
+                },
+                {
+                    question: "Embeddings Model มีบทบาทหลักในการสร้าง Vector ของเอกสารสำหรับการจัดเก็บ หรือใช้สร้างคำตอบจากข้อมูลที่ค้นหาได้?",
+                    choices: [
+                        { text: "สร้าง Vector ของเอกสารสำหรับการจัดเก็บ", correct: true },
+                        { text: "ใช้สร้างคำตอบจากข้อมูลที่ค้นหาได้", correct: false }
+                    ]
+                },
+                {
+                    question: "กระบวนการที่ Nong Kwanjai ค้นหาข้อมูลบนฐานข้อมูลเพื่อหาเอกสารที่เกี่ยวข้อง เกิดขึ้นในลำดับใดเมื่อเทียบกับการแปลงคำพูดของผู้ใช้ให้เป็น Vector?",
+                    choices: [
+                        { text: "ก่อนการแปลงคำพูด", correct: false },
+                        { text: "หลังการแปลงคำพูด", correct: true }
+                    ]
+                },
+                {
+                    question: "Vector DB ทำหน้าที่จัดเก็บข้อมูลในรูปแบบใด?",
+                    choices: [
+                        { text: "ไฟล์เอกสารในรูปแบบต้นฉบับ", correct: false },
+                        { text: "ข้อมูลเชิงตัวเลข (Vector Embeddings)", correct: true }
+                    ]
+                },
+                {
+                    question: "การจัดกลุ่มข้อมูลเอกสารให้เป็นระเบียบพร้อมสร้างดัชนีสำหรับค้นหา (Vector Embeddings) เป็นส่วนหนึ่งของขั้นตอนใด?",
+                    choices: [
+                        { text: "การหาข้อมูล", correct: false },
+                        { text: "การเตรียมข้อมูล", correct: true }
+                    ]
+                },
+                {
+                    question: "LLMs ในระบบของ Nong Kwanjai มีความสามารถในการค้นหาเอกสารจาก Vector DB หรือเป็นเพียงส่วนที่ใช้สร้างคำตอบ?",
+                    choices: [
+                        { text: "ค้นหาเอกสารจาก Vector DB", correct: false },
+                        { text: "เป็นเพียงส่วนที่ใช้สร้างคำตอบ", correct: true }
+                    ]
+                },
+                {
+                    question: "ความสามารถในการ \"สรุปข้อมูล\" ของ Nong Kwanjai เป็นผลมาจากการทำงานของโมเดลใด?",
+                    choices: [
+                        { text: "Embeddings Model", correct: false },
+                        { text: "LLMs (Large Language Models)", correct: true }
+                    ]
+                },
+                {
+                    question: "ในการตอบคำถาม Nong Kwanjai ใช้ข้อมูลจากแหล่งใดเป็นหลัก?",
+                    choices: [
+                        { text: "ข้อมูลจากเอกสารที่หาเจอเท่านั้น", correct: true },
+                        { text: "ข้อมูลความรู้ทั่วไปจากโมเดลด้วย", correct: false }
+                    ]
+                },
+                {
+                    question: "กระบวนการ \"การหาข้อมูล\" เริ่มต้นด้วยสิ่งใด?",
+                    choices: [
+                        { text: "การแปลงคำถามของผู้ใช้ให้เป็น Vector", correct: true },
+                        { text: "การค้นหาข้อมูลใน Vector DB โดยตรง", correct: false }
+                    ]
+                },
+                {
+                    question: "Embeddings Model สร้างค่า Vector ที่เป็นตัวแทนของสิ่งใด?",
+                    choices: [
+                        { text: "ข้อมูลเอกสารและคำถามของผู้ใช้", correct: true },
+                        { text: "คำตอบสุดท้าย", correct: false }
+                    ]
+                },
+                {
+                    question: "Vector Database (Vector DB) ถูกออกแบบมาเพื่อการจัดเก็บและค้นหาข้อมูลประเภทใดเป็นหลัก?",
+                    choices: [
+                        { text: "ข้อมูลเชิงโครงสร้าง (Structured Data) ทั่วไป", correct: false },
+                        { text: "ข้อมูล Vector (Vector Data)", correct: true }
+                    ]
+                },
+                {
+                    question: "หากผู้ใช้พิมพ์คำถาม ระบบจะแปลงคำถามนั้นเป็น Vector ด้วย Embeddings Model ในขั้นตอนใด?",
+                    choices: [
+                        { text: "การเตรียมข้อมูล", correct: false },
+                        { text: "การหาข้อมูล", correct: true }
+                    ]
+                },
+                {
+                    question: "กระบวนการ \"การเตรียมข้อมูล\" ของ Nong Kwanjai รวมถึงการสร้าง Vector Embeddings และการจัดเก็บลง Vector DB หรือไม่?",
                     choices: [
                         { text: "ใช่", correct: true },
                         { text: "ไม่ใช่", correct: false }
                     ]
                 },
                 {
-                    question: "คำถามที่ 7: ขวัญใจช่วยสร้างรูปภาพได้ใช่ไหม?",
+                    question: "Nong Kwanjai ใช้ LLMs ในการ \"ค้นหาข้อมูล\" หรือในการ \"สร้างคำตอบ\" จากข้อมูลที่ค้นพบ?",
                     choices: [
-                        { text: "ไม่ได้", correct: true },
-                        { text: "ได้", correct: false }
+                        { text: "ค้นหาข้อมูล", correct: false },
+                        { text: "สร้างคำตอบ", correct: true }
                     ]
                 },
                 {
-                    question: "คำถามที่ 8: ขวัญใจสามารถจำข้อมูลการสนทนาก่อนหน้าได้ไหม?",
+                    question: "เป้าหมายหลักของ Vector Embeddings คือการจัดเก็บข้อมูลให้ใช้พื้นที่น้อยที่สุด หรือช่วยให้การค้นหาข้อมูลมีความรวดเร็วและแม่นยำ?",
                     choices: [
-                        { text: "ได้", correct: true },
-                        { text: "ไม่ได้", correct: false }
-                    ]
-                },
-                {
-                    question: "คำถามที่ 9: ขวัญใจตอบคำถามเป็นภาษาไทยได้ไหม?",
-                    choices: [
-                        { text: "ได้", correct: true },
-                        { text: "ไม่ได้", correct: false }
+                        { text: "จัดเก็บข้อมูลให้ใช้พื้นที่น้อยที่สุด", correct: false },
+                        { text: "ช่วยให้การค้นหาข้อมูลมีความรวดเร็วและแม่นยำ", correct: true }
                     ]
                 }
             ];
@@ -1300,11 +1377,15 @@
                 const questionText = document.getElementById('questionText');
                 const choiceButtons = document.getElementById('choiceButtons');
                 
-                questionText.textContent = questions[index].question;
+                // Randomly select a question from the questions array
+                const randomQuestionIndex = Math.floor(Math.random() * questions.length);
+                const selectedQuestion = questions[randomQuestionIndex];
+                
+                questionText.textContent = selectedQuestion.question;
                 choiceButtons.innerHTML = '';
                 
                 // Create choice buttons
-                questions[index].choices.forEach((choice, choiceIndex) => {
+                selectedQuestion.choices.forEach((choice, choiceIndex) => {
                     const button = document.createElement('button');
                     button.className = 'choice-btn';
                     button.textContent = choice.text;
